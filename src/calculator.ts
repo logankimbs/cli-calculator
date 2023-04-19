@@ -1,6 +1,4 @@
-import * as readline from "readline";
-
-class Calculator {
+export class Calculator {
     private _operation: Array<number | string>;
     private _result: number;
     private _hasEqualSign: boolean;
@@ -117,22 +115,3 @@ class Calculator {
         }
     }
 }
-
-const calculator = new Calculator();
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-rl.setPrompt('0\n> ');
-rl.prompt();
-rl.on('line', (input) => {
-    try {
-        const result = calculator.calculate(input);
-        rl.setPrompt(`${result}\n> `);
-    } catch (e) {
-        rl.setPrompt(`Error: ${e.message}\n> `);
-    }
-
-    rl.prompt();
-});
