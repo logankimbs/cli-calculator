@@ -39,7 +39,7 @@ class Calculator {
         }
 
         for (const currentChar of input) {
-            if (/[^0-9+\-*/().!c%=]/.test(currentChar)) {
+            if (/[^0-9+\-*/().!cC%=]/.test(currentChar)) {
                 throw new Error("Invalid character found");
             }
 
