@@ -16,7 +16,7 @@ class Calculator {
         this._sanitizeAndParse(input);
 
         if (this._hasEqualSign) {
-            this._result = this._calculate();
+            this._result = this._evaluateOperation();
             this._operation = [this._result];
             this._hasEqualSign = false;
         }
@@ -107,7 +107,7 @@ class Calculator {
         addToOperation();
     }
 
-    private _calculate(): number {
+    private _evaluateOperation(): number {
         const output = new Function('return ' + this._operation.join(''))();
         if (typeof output === "number" && !isNaN(output) && isFinite(output)) {
             return output;
