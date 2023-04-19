@@ -48,4 +48,4 @@ npm install
 npm start
 ```
 
-2. Exit the calculator by pressing `Ctrl + C` or `Ctrl + D`.
+2. Exit the calculator by pressing `Ctrl + C`.
