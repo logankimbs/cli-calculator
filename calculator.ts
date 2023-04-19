@@ -109,10 +109,11 @@ class Calculator {
 
     private _evaluateOperation(): number {
         const output = new Function('return ' + this._operation.join(''))();
+
         if (typeof output === "number" && !isNaN(output) && isFinite(output)) {
             return output;
         } else {
-            throw new Error('Cannot divide by zero');
+            throw new Error('Invalid operation');
         }
     }
 }
