@@ -25,7 +25,6 @@ class Calculator {
             this._result = this._operation[this._operation.length - 1] as number;
         }
 
-        console.log(this._operation);
         return this._result;
     }
 
@@ -42,6 +41,10 @@ class Calculator {
         for (const currentChar of input) {
             if (/[^0-9+\-*/().!c%=]/.test(currentChar)) {
                 throw new Error("Invalid character found");
+            }
+
+            if (currentChar == '=' && input[input.length - 1] != '=') {
+                throw new Error("Equal sign must be the last character");
             }
 
             if (operators.has(currentChar)) {
