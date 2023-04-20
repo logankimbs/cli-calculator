@@ -1,117 +1,102 @@
+enum Operation {
+    Add = '+',
+    Subtract = '-',
+    Multiply = '*',
+    Divide = '/'
+}
+
 export class Calculator {
-    private _operation: Array<number | string>;
-    private _result: number;
-    private _hasEqualSign: boolean;
+    private currentValue: number;
+    private pendingValue: number | null;
+    private pendingOperation: Operation | null;
+    private newNumber: boolean;
 
     constructor() {
-        this._operation = [];
-        this._result = 0;
-        this._hasEqualSign = false;
+        this.currentValue = 0;
+        this.pendingValue = null;
+        this.pendingOperation = null;
+        this.newNumber = false;
     }
 
-    public calculate(input: string): number {
-        this._validate(input);
-        this._sanitizeAndParse(input);
-
-        if (this._hasEqualSign) {
-            this._result = this._evaluateOperation();
-            this._operation = [this._result];
-            this._hasEqualSign = false;
-        }
-
-        if (this._operation.length > 0) {
-            this._result = this._operation[this._operation.length - 1] as number;
-        }
-
-        return this._result;
-    }
-
-    private _validate(input: string): void {
-        input = input.toLowerCase();
-
-        const operators = new Set(['+', '-', '*', '/']);
-        let prevCharIsOperator = false;
-
-        if (operators.has(input[input.length - 1])) {
-            throw new Error('Input cannot end with an operator');
-        }
-
-        for (const currentChar of input) {
-            if (/[^0-9+\-*/().!cC%=]/.test(currentChar)) {
-                throw new Error("Invalid character found");
-            }
-
-            if (currentChar == '=' && input[input.length - 1] != '=') {
-                throw new Error("Equal sign must be the last character");
-            }
-
-            if (operators.has(currentChar)) {
-                if (prevCharIsOperator) {
-                    throw new Error("Multiple consecutive operators found");
+    public processInput(input) {
+        for (const char of input) {
+            if (char === 'c') {
+                this.clear();
+            } else if (char === '!') {
+                this.toggleSign();
+            } else if (char === '%') {
+                this.percentage();
+            } else if (char === '=') {
+                this.calculate();
+            } else if (Object.values(Operation).includes(char)) {
+                this.setOperation(char);
+            } else if ('0123456789'.includes(char)) {
+                if (this.newNumber) {
+                    this.currentValue = 0;
+                    this.newNumber = false;
                 }
-                prevCharIsOperator = true;
-            } else {
-                prevCharIsOperator = false;
+
+                this.appendNumber(char);
             }
         }
     }
 
-    private _sanitizeAndParse(input: string): void {
-        input = input.replace(/\s/g, ''); // Remove all whitespace
-
-        if (input.startsWith('(')) {
-            this._operation = [];
-            this._result = 0;
-        }
-
-        let currentNum = '';
-        const addToOperation = () => {
-            if (currentNum !== '') {
-                this._operation.push(parseFloat(currentNum));
-                currentNum = '';
-            }
-        };
-
-        for (const currentChar of input) {
-            if (/\d|\./.test(currentChar)) {
-                currentNum += currentChar;
-            } else {
-                switch (currentChar) {
-                    case 'c':
-                        this._operation = [];
-                        this._result = 0;
-                        this._hasEqualSign = false;
-                        break;
-                    case '!':
-                        addToOperation();
-                        this._result *= -1;
-                        this._operation[this._operation.length - 1] = this._result;
-                        break;
-                    case '%':
-                        addToOperation();
-                        this._result /= 100;
-                        this._operation[this._operation.length - 1] = this._result;
-                        break;
-                    case '=':
-                        this._hasEqualSign = true;
-                        break;
-                    default:
-                        addToOperation();
-                        this._operation.push(currentChar);
-                }
-            }
-        }
-
-        addToOperation();
+    private appendNumber(number) {
+        this.currentValue = this.currentValue * 10 + parseInt(number, 10);
     }
 
-    private _evaluateOperation(): number {
-        const output = new Function('return ' + this._operation.join(''))();
-
-        if (typeof output === "number" && !isNaN(output) && isFinite(output)) {
-            return output;
+    private setOperation(operation) {
+        if (this.pendingOperation === null) {
+            this.pendingOperation = operation;
+            this.pendingValue = this.currentValue;
+            this.newNumber = true;
         } else {
-            throw new Error('Invalid operation');
+            this.calculate();
+            this.pendingOperation = operation;
+            this.newNumber = true;
         }
+    }
+
+    private calculate() {
+        if (this.pendingValue !== null) {
+            switch (this.pendingOperation) {
+                case Operation.Add:
+                    this.currentValue = this.pendingValue + this.currentValue;
+                    break;
+                case Operation.Subtract:
+                    this.currentValue = this.pendingValue - this.currentValue;
+                    break;
+                case Operation.Multiply:
+                    this.currentValue = this.pendingValue * this.currentValue;
+                    break;
+                case Operation.Divide:
+                    if (this.currentValue === 0) throw new Error('Error');
+                    this.currentValue = this.pendingValue / this.currentValue;
+                    break;
+            }
+
+            this.pendingValue = null;
+            this.pendingOperation = null;
+            this.newNumber = true;
+        }
+    }
+
+    private clear() {
+        this.currentValue = 0;
+        this.pendingValue = null;
+        this.pendingOperation = null;
+        this.newNumber = false;
+    }
+
+    private toggleSign() {
+        this.currentValue = -this.currentValue;
+    }
+
+    private percentage() {
+        this.currentValue = this.currentValue / 100;
+    }
+
+    public getCurrentValue() {
+        return this.currentValue;
     }
 }

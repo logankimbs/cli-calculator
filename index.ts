@@ -11,10 +11,10 @@ rl.setPrompt('0\n> ');
 rl.prompt();
 rl.on('line', (input) => {
     try {
-        const result = calculator.calculate(input);
-        rl.setPrompt(`${result}\n> `);
+        calculator.processInput(input);
+        rl.setPrompt(`${calculator.getCurrentValue()}\n> `);
     } catch (e) {
-        rl.setPrompt(`Error: ${e.message}\n> `);
+        rl.setPrompt(`${e.message}\n> `);
     }
 
     rl.prompt();
