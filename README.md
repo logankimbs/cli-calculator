@@ -12,7 +12,6 @@ such as addition, subtraction, multiplication, and division, as well as a few ex
     - `!`: Toggle the sign of the current number (negative/positive).
     - `%`: Convert the current number to a percentage (divide by 100).
     - `=`: Calculate the result of the current operation.
-4. Parentheses support for grouping expressions is currently a work in progress.
 
 ## Getting Started
 

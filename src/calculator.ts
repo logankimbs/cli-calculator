@@ -41,17 +41,18 @@ export class Calculator {
         }
     }
 
-    private appendNumber(number) {
+    private appendNumber(number: string) {
         this.currentValue = this.currentValue * 10 + parseInt(number, 10);
     }
 
-    private setOperation(operation) {
+    private setOperation(operation: Operation) {
         if (this.pendingOperation === null) {
             this.pendingOperation = operation;
             this.pendingValue = this.currentValue;
             this.newNumber = true;
         } else {
             this.calculate();
+            this.pendingValue = this.currentValue;
             this.pendingOperation = operation;
             this.newNumber = true;
         }
